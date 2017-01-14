@@ -2,7 +2,7 @@
  * Based on SmartThings Dimmer Switch and @twack's VirtualBetterDimmer
  */
 metadata {
-	definition (name: "Virtual Dimmer Switch", namespace: "jason0x43", author: "Jason Cheatham") {
+	definition (name: "Virtual Dimmer Switch (jason0x43)", namespace: "jason0x43", author: "Jason Cheatham") {
 		capability "Switch Level"
 		capability "Switch"
 		capability "Polling"

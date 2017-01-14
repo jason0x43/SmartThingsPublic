@@ -14,7 +14,7 @@
  *
  */
  metadata {
-    definition(name: 'MIMOlite Sensor', namespace: 'jason0x43', author: 'Jason Cheatham') {
+    definition(name: 'MIMOlite Sensor (jason0x43)', namespace: 'jason0x43', author: 'Jason Cheatham') {
         capability('Contact Sensor')
 		capability('Refresh')
 		capability('Configuration')
