@@ -28,7 +28,7 @@ definition(
 )
 
 preferences {
-    page(name: "mainPage", install: false, uninstall: true, nextPage: "devicePage")
+    page(name: "namePage", install: false, uninstall: true, nextPage: "devicePage")
     page(name: "devicePage", install: true, uninstall: true)
 }
 
