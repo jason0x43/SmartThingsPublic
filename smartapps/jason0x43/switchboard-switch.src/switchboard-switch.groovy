@@ -28,12 +28,12 @@ definition(
 )
 
 preferences {
-    page(name: "namePage", install: false, uninstall: true, nextPage: "devicePage")
-    page(name: "devicePage", install: true, uninstall: true)
+    page(name: "namePage", nextPage: "devicePage")
+    page(name: "devicePage")
 }
 
 def namePage() {
-    dynamicPage(name: "namePage", title: "New Switch", install: true, uninstall: childCreated()) {
+    dynamicPage(name: "namePage", title: "New Switch", install: false, uninstall: childCreated()) {
         section {
             label(title: "Device Label:", required: true)
         }
@@ -50,10 +50,6 @@ def devicePage() {
     }
 }
 
-def inputDeviceType() {
-    input("deviceType", "enum", title: "Device Type:", required: true, options: ["Momentary Button Tile", "Simulated Button (jason0x43)"], defaultValue: "Momentary Button Tile")
-}
-
 def installed() {
     createChildDevice(app.label, settings.deviceType)
     initialize()
@@ -67,6 +63,10 @@ def updated() {
 }
 
 def initialize() {
+}
+
+def inputDeviceType() {
+    input("deviceType", "enum", title: "Device Type:", required: true, options: ["Momentary Button Tile", "Simulated Button (jason0x43)"], defaultValue: "Momentary Button Tile")
 }
 
 def createChildDevice(deviceLabel, deviceType) {
