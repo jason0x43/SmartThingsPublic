@@ -18,7 +18,7 @@
 definition(
     name: "Switchboard Switch",
     namespace: "jason0x43/switchboard",
-    parent: "jason0x43/switchboard:Switchboard
+    parent: "jason0x43/switchboard:Switchboard",
     author: "Jason Cheatham",
     description: "A virtual momentary switch for controlling routines",
     category: "My Apps",
