@@ -1,5 +1,5 @@
 /**
- *  Switchboard
+ *  Button Factory
  *
  *  Copyright 2017 Jason Cheatham
  *
@@ -16,10 +16,10 @@
  *  Copyright 2015 Brian Keifer
  */
 definition(
-    name: "Switchboard",
+    name: "Button Factory",
     namespace: "jason0x43",
     author: "Jason Cheatham",
-    description: "Create virtual momentary switches for controlling routines",
+    description: "Create momentary switches and buttons for controlling routines",
     category: "My Apps",
     singleInstance: true,
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/App-BigButtonsAndSwitches.png",
@@ -28,9 +28,9 @@ definition(
 )
 
 preferences {
-    page(name: "mainPage", title: "Installed Switches", install: true, uninstall: true, submitOnChange: true) {
+    page(name: "mainPage", title: "Installed Buttons", install: true, uninstall: true, submitOnChange: true) {
         section {
-            app(name: "switches", appName: "Switchboard Switch", namespace: "jason0x43", title: "New Switch", multiple: true)
+            app(name: "buttons", appName: "Button Factory Button", namespace: "jason0x43", title: "New Button", multiple: true)
         }
     }
 }

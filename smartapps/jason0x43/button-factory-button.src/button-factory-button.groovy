@@ -1,5 +1,5 @@
 /**
- *  Switchboard Switch
+ *  Button Factory Button
  *
  *  Copyright 2017 Jason Cheatham
  *
@@ -16,11 +16,11 @@
  *  Copyright 2015 Brian Keifer
  */
 definition(
-    name: "Switchboard Switch",
+    name: "Button Factory Button",
     namespace: "jason0x43",
-    parent: "jason0x43:Switchboard",
+    parent: "jason0x43:Button Factory",
     author: "Jason Cheatham",
-    description: "A virtual momentary switch for controlling routines",
+    description: "A momentary switch or button for controlling routines",
     category: "My Apps"
 )
 
@@ -30,7 +30,7 @@ preferences {
 }
 
 def namePage() {
-    dynamicPage(name: "namePage", title: "New Switch", install: false, uninstall: childCreated()) {
+    dynamicPage(name: "namePage", title: "New Button", install: false, uninstall: childCreated()) {
         section {
             label(title: "Device Label:", required: true)
         }
@@ -38,11 +38,11 @@ def namePage() {
 }
 
 def devicePage() {
-    dynamicPage(name: "devicePage", title: "New Switch", install: true, uninstall: childCreated()) {
+    dynamicPage(name: "devicePage", title: "New Button", install: true, uninstall: childCreated()) {
         if (!childCreated()) {
             section { inputDeviceType() }
         } else {
-            section { paragraph("Switches currently can not be converted to a different type after installation.\n\n${app.label}") }
+            section { paragraph("Buttons currently can not be converted to a different type after installation.\n\n${app.label}") }
         }
     }
 }
