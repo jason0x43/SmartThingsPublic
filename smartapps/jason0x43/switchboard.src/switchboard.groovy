@@ -17,7 +17,7 @@
  */
 definition(
     name: "Switchboard",
-    namespace: "jason0x43/switchboard",
+    namespace: "jason0x43",
     author: "Jason Cheatham",
     description: "Create virtual momentary switches for controlling routines",
     category: "My Apps",
@@ -30,7 +30,7 @@ definition(
 preferences {
     page(name: "mainPage", title: "Installed Switches", install: true, uninstall: true, submitOnChange: true) {
         section {
-            app(name: "switches", appName: "Switchboard Switch", namespace: "jason0x43/switchboard", title: "New Switch", multiple: true)
+            app(name: "switches", appName: "Switchboard Switch", namespace: "jason0x43", title: "New Switch", multiple: true)
         }
     }
 }
