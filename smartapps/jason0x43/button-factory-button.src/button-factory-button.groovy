@@ -21,7 +21,10 @@ definition(
     parent: "jason0x43:Button Factory",
     author: "Jason Cheatham",
     description: "A momentary switch or button for controlling routines",
-    category: "My Apps"
+    category: "My Apps",
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/App-BigButtonsAndSwitches.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/App-BigButtonsAndSwitches@2x.png",
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/App-BigButtonsAndSwitches@2x.png"
 )
 
 preferences {
