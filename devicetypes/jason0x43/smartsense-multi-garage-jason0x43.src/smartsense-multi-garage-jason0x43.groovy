@@ -29,6 +29,7 @@ metadata {
 		capability "Signal Strength"
 		capability "Temperature Measurement"
 		capability "Three Axis"
+        capability "Refresh"
 
 		attribute "status", "string"
 		attribute "door", "string"
