@@ -20,39 +20,29 @@
  *  under the License.
  */
 
-preferences {
-    input(
-        'zipcode',
-        'text',
-        title: 'ZipCode',
-        description: 'ZIP code for forecast (autodetected by default)'
-    )
-}
-
 metadata {
     definition(
         name: 'Weather Station',
         author: 'Jason Cheatham',
         namespace: 'jason0x43'
     ) {
-        capability 'Polling'
-        capability 'Relative Humidity Measurement'
-        capability 'Temperature Measurement'
+        capability('Polling')
+        capability('Refresh')
+        capability('Relative Humidity Measurement')
+        capability('Temperature Measurement')
+        capability('Thermostat Mode')
     }
 
     tiles {
-        // First Row
         valueTile(
             'temperature',
             'device.temperature',
-            width: 1,
-            height: 1,
-            canChangeIcon: true
         ) {
             state(
-                'temperature',
-                label: 'Outside\n${currentValue}°F',
-                unit:'F',
+                'default',
+                label: '${currentValue}°F',
+                unit: 'dF',
+                
                 backgroundColors: [
                     [value: 31, color: '#153591'],
                     [value: 44, color: '#1e9cbb'],
@@ -67,28 +57,37 @@ metadata {
 
         valueTile(
             'humidity',
-            'device.humidity',
-            inactiveLabel: false,
-            decoration: 'flat'
+            'device.humidity'
         ) {
-            state 'default',  label:'${currentValue}%', unit: 'Humidity'
+            state('default',  label:'Humidity\n${currentValue}%', unit: '%')
         }
 
-        valueTile(
-            'feels_like',
-            'device.feels_like',
-            inactiveLabel: false,
-            decoration: 'flat'
+        standardTile(
+            'direction',
+            'device.thermostatMode'
         ) {
-            state 'feels_like', label: '${currentValue}ºF', unit: 'Feels Like'
+            state(
+            	'cool',
+                label: 'Cool',
+                icon: 'st.Weather.weather2',
+                backgroundColor: '#9999ff'
+            )
+            state(
+            	'heat',
+                label: 'Heat',
+                icon: 'st.Weather.weather2',
+                backgroundColor: '#ff9999'
+            )
+        	state(
+            	'off',
+                icon: 'st.Weather.weather2',
+                label: 'Steady'
+            )
         }
 
-        // Second Row
         standardTile(
             'forecast',
-            'device.forecast',
-            inactiveLabel: false,
-            decoration: 'flat'
+            'device.forecast'
         ) {
             state(
                 'default',
@@ -192,47 +191,27 @@ metadata {
             )
         }
 
-        valueTile(
-            'wind_speed',
-            'device.wind_speed',
-            inactiveLabel: false,
-            decoration: 'flat'
+        standardTile(
+        	'water',
+            'device.water'
         ) {
             state(
-                'wind_speed',
-                label: '${currentValue}',
-                unit: 'mph',
-                backgroundColors: [
-                    // Values and colors based on the Beaufort Scale
-                    // http://en.wikipedia.org/wiki/Beaufort_scale#Modern_scale
-                    [value: 0,  color: '#ffffff'],
-                    [value: 1,  color: '#ccffff'],
-                    [value: 4,  color: '#99ffcc'],
-                    [value: 8,  color: '#99ff99'],
-                    [value: 13, color: '#99ff66'],
-                    [value: 18, color: '#99ff00'],
-                    [value: 25, color: '#ccff00'],
-                    [value: 31, color: '#ffff00'],
-                    [value: 39, color: '#ffcc00'],
-                    [value: 47, color: '#ff9900'],
-                    [value: 55, color: '#ff6600'],
-                    [value: 64, color: '#ff3300'],
-                    [value: 74, color: '#ff0000']
-                ]
+            	'default',
+                label: 'updating...',
+                icon: 'st.unknown.unknown.unknown'
+            )
+            state(
+            	'true',
+                icon: 'st.alarm.water.wet',
+                backgroundColor: '#ff9999'
+            )
+            state(
+            	'false',
+                icon: 'st.alarm.water.dry',
+                backgroundColor: '#99ff99'
             )
         }
-
-        // Third Row
-        valueTile(
-            'location',
-            'device.location',
-            inactiveLabel: false,
-            decoration: 'flat'
-        ) {
-            state 'location', label: '${currentValue}', unit: 'ZipCode'
-        }
-
-        // Fourth Row
+        
         standardTile(
             'refresh',
             'device.refresh',
@@ -247,67 +226,49 @@ metadata {
         details([
             'temperature',
             'humidity',
-            'feels_like',
             'forecast',
-            'wind_speed',
-            'wind_direction',
-            'uv_index',
+            'direction',
             'water',
-            'location',
             'refresh'
         ])
     }
 }
 
 def poll() {
-    def weather
-
-    if (settings.zipcode) {
-        weather = getWeatherFeature('conditions', settings.zipcode)
-    } else {
-        // No ZIP code specified; ST will use hub location
-        weather = getWeatherFeature('conditions')
-    }
+    def weather = getWeatherFeature('conditions')
+    def forecast = getWeatherFeature('hourly')
 
     if (!weather) {
         log.debug('No data found')
         return false
     }
+    
+    def icon = weather.current_observation.icon
+    log.debug("Forecast: ${icon}")
+    sendEvent(name: 'forecast', value: icon)
 
-    log.debug('Forecast: ${weather.current_observation.icon}')
-    sendEvent(name: 'forecast', value: weather.current_observation.icon)
+    def temp = weather.current_observation.temp_f.toFloat()
+    log.debug("Current Temperature: ${temp}ºF")
+    sendEvent(name: 'temperature', value: temp)
 
-    log.debug('Wind Speed: ${weather.current_observation.wind_mph} mph')
-    sendEvent(name: 'wind_speed', value: weather.current_observation.wind_mph)
-    log.debug('Wind Direction: ${weather.current_observation.wind_dir}')
-    sendEvent(
-        name: 'wind_direction',
-        value: weather.current_observation.wind_dir
-    )
+    def humidity = weather.current_observation.relative_humidity.replace('%', '').toInteger()
+    log.debug("Relative Humidity: ${humidity}%")
+    sendEvent(name: 'humidity', value: humidity)
+    
+    def hour1 = forecast.hourly_forecast[0].temp.english.toInteger()
+    def hour2 = forecast.hourly_forecast[1].temp.english.toInteger()
+    def mode = 'off';
+    if (hour1 > hour2) {
+        mode = 'cool';
+    } else if (hour1 < hour2) {
+        mode = 'heat';
+    }
+    log.debug("Direction: ${mode}")
+   	sendEvent(name: 'thermostatMode', value: mode)
 
-    log.debug('Current Temperature: ${weather.current_observation.temp_f}ºF')
-    sendEvent(name: 'temperature', value: weather.current_observation.temp_f)
-
-    log.debug('Relative Humidity: ${weather.current_observation.relative_humidity}')
-    sendEvent(
-        name: 'humidity',
-        value: weather.current_observation.relative_humidity
-    )
-
-    log.debug('Feels Like: ${weather.current_observation.feelslike_f}')
-    sendEvent(
-        name: 'feels_like',
-        value: weather.current_observation.feelslike_f
-    )
-
-    log.debug('Location: ${weather.current_observation.display_location.zip.toString()}')
-    sendEvent(
-        name: 'location',
-        value: weather.current_observation.display_location.zip.toString()
-    )
-
-    if (weather.current_observation.precip_1hr_in.toFloat() > 0) {
-        log.debug('Precipitation: ${weather.current_observation.precip_1hr_in}')
+    def precip = weather.current_observation.precip_1hr_in.toFloat()
+    if (precip > 0) {
+        log.debug("Precipitation: ${precip}")
         sendEvent(name: 'water', value: 'true')
     } else {
         log.debug('Precipitation: None')
